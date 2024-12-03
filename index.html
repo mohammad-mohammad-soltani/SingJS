@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style="position: absolute;" >
+        <button>eraser mode</button>
+        <button>clear</button>
+        <button><a download="sing.png" href="" >download</a></button>
+    </div>
+    <canvas id="canvas"   ></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 20;
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0,canvas.width , canvas.height);
+        let x = 0;
+        let y = 0;
+        let draw = false;
+        let eraser = false;
+        canvas.addEventListener("mousedown" , (e) => {
+            draw = true;
+            [x, y] = [e.offsetX, e.offsetY];
+        } )
+        canvas.addEventListener("mouseup" , (e) => {
+            draw = false;
+            [x, y] = [e.offsetX, e.offsetY];
+        } )
+        canvas.addEventListener("mousemove" , (e) => {
+            if(eraser){
+                if (!e.buttons) draw = false;
+                if (!draw) return;
+                // Use clearRect for erasing
+                ctx.clearRect(e.offsetX, e.offsetY, 10, 10); // Clear small area
+            }else{
+                if(!e.buttons) draw = false
+                if(!draw  ) return;
+                ctx.strokeStyle = (eraser) ? "white" : "black"
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                [x, y] = [e.offsetX, e.offsetY];
+                console.log(e)
+            }
+           document.getElementsByTagName("a")[0].href = canvas.toDataURL('image/png');
+        })
+        document.getElementsByTagName("button")[0].addEventListener("click" , () => {
+            if(!eraser){ eraser = true;document.getElementsByTagName("button")[0].innerHTML = "eraser mode ON";}
+            else{ eraser = false;document.getElementsByTagName("button")[0].innerHTML = "eraser mode OFF";}
+        })
+        document.getElementsByTagName("button")[1].addEventListener("click" , () => {
+            ctx.fillStyle = "white"
+            ctx.fillRect(0 , 0 , canvas.width , canvas.height);
+        })
+    </script>
+</body>
+</html>
